@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
-import { MessageCircle, X, Send, Bot, User, Sparkles, Minimize2 } from 'lucide-react'
+import { MessageCircle, X, Send, Sparkles, Bot, User } from 'lucide-react'
 import { api } from '../services/api'
 
 export default function FloatingChat() {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
         {
-            type: 'bot',
-            content: "Hi! I'm your AI assistant. Ask me anything about your data, quality scores, or ML models."
+            role: 'assistant',
+            content: "Hi! I'm your DAQU assistant. Ask me about data quality, ML training, or your uploaded datasets."
         }
     ])
     const [input, setInput] = useState('')
@@ -25,26 +25,25 @@ export default function FloatingChat() {
     const sendMessage = async () => {
         if (!input.trim() || loading) return
 
-        const userMsg = input.trim()
+        const userMessage = { role: 'user', content: input }
+        setMessages(prev => [...prev, userMessage])
         setInput('')
-        setMessages(prev => [...prev, { type: 'user', content: userMsg }])
         setLoading(true)
 
         try {
-            const response = await api.sendAssistantMessage(userMsg)
-            setMessages(prev => [...prev, {
-                type: 'bot',
-                content: response.answer,
-                provider: response.provider
-            }])
+            const response = await api.sendAssistantMessage(input)
+            if (response.status === 'success') {
+                setMessages(prev => [...prev, {
+                    role: 'assistant',
+                    content: response.response
+                }])
+            }
         } catch (error) {
             setMessages(prev => [...prev, {
-                type: 'bot',
-                content: "Sorry, I couldn't process that. Please try again.",
-                isError: true
+                role: 'assistant',
+                content: "I'm having trouble connecting. Please try again."
             }])
         }
-
         setLoading(false)
     }
 
@@ -55,130 +54,104 @@ export default function FloatingChat() {
         }
     }
 
-    // Quick actions
-    const quickActions = [
-        "How many files uploaded?",
-        "What's my quality score?",
-        "Recommend a model"
-    ]
-
     return (
         <>
             {/* Floating Button */}
-            {!isOpen && (
-                <button
-                    onClick={() => setIsOpen(true)}
-                    className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-gradient-to-br from-primary-600 to-purple-600 text-white shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center z-50"
-                >
-                    <MessageCircle className="w-6 h-6" />
-                </button>
-            )}
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className={`fixed bottom-6 left-6 z-50 w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group ${isOpen
+                        ? 'bg-surface-elevated border border-white/10 rotate-0'
+                        : 'bg-gradient-to-br from-primary-500 to-primary-600 shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-105'
+                    }`}
+            >
+                {isOpen ? (
+                    <X className="w-5 h-5 text-gray-400" />
+                ) : (
+                    <MessageCircle className="w-6 h-6 text-surface-dark" />
+                )}
+                {!isOpen && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></span>
+                )}
+            </button>
 
             {/* Chat Window */}
             {isOpen && (
-                <div className="fixed bottom-6 right-6 w-96 h-[500px] bg-zinc-900 border border-zinc-700 rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden">
-                    {/* Header */}
-                    <div className="bg-gradient-to-r from-primary-600 to-purple-600 p-4 flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                                <Bot className="w-5 h-5 text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-white font-semibold">AI Assistant</h3>
-                                <p className="text-white/70 text-xs flex items-center gap-1">
-                                    <span className="w-2 h-2 bg-green-400 rounded-full"></span>
-                                    Online
-                                </p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={() => setIsOpen(false)}
-                            className="text-white/70 hover:text-white p-1"
-                        >
-                            <Minimize2 className="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    {/* Messages */}
-                    <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                        {messages.map((msg, i) => (
-                            <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                                <div className={`max-w-[85%] ${msg.type === 'user'
-                                        ? 'bg-primary-600 text-white rounded-2xl rounded-br-sm'
-                                        : msg.isError
-                                            ? 'bg-red-500/10 border border-red-500/30 text-red-300 rounded-2xl rounded-bl-sm'
-                                            : 'bg-zinc-800 text-gray-200 rounded-2xl rounded-bl-sm'
-                                    } p-3`}>
-                                    <p className="text-sm whitespace-pre-wrap leading-relaxed"
-                                        dangerouslySetInnerHTML={{ __html: formatMessage(msg.content) }} />
-                                    {msg.provider && msg.provider !== 'direct' && (
-                                        <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                                            <Sparkles className="w-3 h-3" /> {msg.provider}
-                                        </p>
-                                    )}
+                <div className="fixed bottom-24 left-6 z-50 w-[380px] max-w-[calc(100vw-48px)] animate-scale-in">
+                    <div className="card p-0 overflow-hidden border-white/10">
+                        {/* Header */}
+                        <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-r from-primary-500/10 to-transparent">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-mocha-500 flex items-center justify-center">
+                                    <Sparkles className="w-5 h-5 text-surface-dark" />
+                                </div>
+                                <div>
+                                    <h3 className="font-semibold text-white">DAQU Assistant</h3>
+                                    <p className="text-xs text-gray-500">Powered by AI</p>
                                 </div>
                             </div>
-                        ))}
-                        {loading && (
-                            <div className="flex justify-start">
-                                <div className="bg-zinc-800 rounded-2xl rounded-bl-sm p-3">
-                                    <div className="flex gap-1">
-                                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        </div>
+
+                        {/* Messages */}
+                        <div className="h-80 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+                            {messages.map((msg, i) => (
+                                <div
+                                    key={i}
+                                    className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''} animate-fade-in`}
+                                >
+                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${msg.role === 'user'
+                                            ? 'bg-primary-500/20 text-primary-500'
+                                            : 'bg-surface-elevated text-gray-400'
+                                        }`}>
+                                        {msg.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                                    </div>
+                                    <div className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm ${msg.role === 'user'
+                                            ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-surface-dark rounded-br-md'
+                                            : 'bg-surface-elevated text-gray-300 rounded-bl-md'
+                                        }`}>
+                                        {msg.content}
                                     </div>
                                 </div>
-                            </div>
-                        )}
-                        <div ref={messagesEndRef} />
-                    </div>
-
-                    {/* Quick Actions */}
-                    {messages.length <= 2 && (
-                        <div className="px-4 pb-2 flex flex-wrap gap-2">
-                            {quickActions.map((action, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => { setInput(action); }}
-                                    className="text-xs px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-gray-300 rounded-full transition-colors"
-                                >
-                                    {action}
-                                </button>
                             ))}
+                            {loading && (
+                                <div className="flex gap-3 animate-fade-in">
+                                    <div className="w-8 h-8 rounded-lg bg-surface-elevated flex items-center justify-center text-gray-400">
+                                        <Bot className="w-4 h-4" />
+                                    </div>
+                                    <div className="px-4 py-3 bg-surface-elevated rounded-2xl rounded-bl-md">
+                                        <div className="flex gap-1">
+                                            <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                                            <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                                            <span className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
                         </div>
-                    )}
 
-                    {/* Input */}
-                    <div className="p-4 border-t border-zinc-700">
-                        <div className="flex gap-2">
-                            <input
-                                type="text"
-                                value={input}
-                                onChange={(e) => setInput(e.target.value)}
-                                onKeyPress={handleKeyPress}
-                                placeholder="Ask anything..."
-                                className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-primary-500"
-                                disabled={loading}
-                            />
-                            <button
-                                onClick={sendMessage}
-                                disabled={loading || !input.trim()}
-                                className="w-10 h-10 rounded-xl bg-primary-600 hover:bg-primary-500 disabled:opacity-50 flex items-center justify-center transition-colors"
-                            >
-                                <Send className="w-4 h-4 text-white" />
-                            </button>
+                        {/* Input */}
+                        <div className="p-4 border-t border-white/5">
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="Ask anything..."
+                                    className="flex-1 px-4 py-3 bg-surface-elevated border border-white/5 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-primary-500/50 text-sm transition-colors"
+                                />
+                                <button
+                                    onClick={sendMessage}
+                                    disabled={loading || !input.trim()}
+                                    className="px-4 py-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl text-surface-dark disabled:opacity-50 hover:shadow-lg hover:shadow-primary-500/30 transition-all disabled:hover:shadow-none"
+                                >
+                                    <Send className="w-4 h-4" />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             )}
         </>
     )
-}
-
-function formatMessage(text) {
-    if (!text) return ''
-    return text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/\n/g, '<br/>')
 }

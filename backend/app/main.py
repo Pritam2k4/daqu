@@ -4,8 +4,8 @@ from app.api.v1.router import api_router
 from app.config import settings
 
 app = FastAPI(
-    title="DataReady AI API",
-    description="AI-powered data preparation platform API",
+    title="DAQU API",
+    description="Know Your Data - AI-powered data quality platform API",
     version="1.0.0"
 )
 
@@ -24,7 +24,7 @@ app.include_router(api_router, prefix="/api/v1")
 @app.get("/")
 async def root():
     return {
-        "message": "DataReady AI API",
+        "message": "DAQU API - Know Your Data",
         "version": "1.0.0",
         "status": "running"
     }

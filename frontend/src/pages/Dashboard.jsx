@@ -141,8 +141,8 @@ export default function Dashboard({ externalReport, sourceId }) {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 whitespace-nowrap ${activeTab === tab.id
-                                    ? 'bg-primary-600 text-white'
-                                    : 'text-gray-400 hover:text-white hover:bg-zinc-800'
+                                ? 'bg-primary-500 text-surface-dark font-semibold'
+                                : 'text-gray-400 hover:text-white hover:bg-zinc-800'
                                 }`}
                         >
                             {tab.icon} {tab.label}
@@ -205,8 +205,8 @@ function OverviewTab({ report }) {
                         <p className="text-gray-400">{quality_score?.grade_description}</p>
                         <div className="flex items-center gap-2 mt-3">
                             <span className={`px-2 py-1 rounded text-xs font-medium ${quality_score?.ml_readiness_status === 'ready' ? 'bg-green-500/20 text-green-400' :
-                                    quality_score?.ml_readiness_status === 'needs_improvement' ? 'bg-yellow-500/20 text-yellow-400' :
-                                        'bg-red-500/20 text-red-400'
+                                quality_score?.ml_readiness_status === 'needs_improvement' ? 'bg-yellow-500/20 text-yellow-400' :
+                                    'bg-red-500/20 text-red-400'
                                 }`}>
                                 ML: {quality_score?.ml_readiness_status?.replace('_', ' ')}
                             </span>
@@ -516,8 +516,8 @@ function DimensionsTab({ report }) {
                                     <td className="px-3 py-2 text-gray-300">{col.skewness}</td>
                                     <td className="px-3 py-2">
                                         <span className={`px-2 py-0.5 rounded text-xs ${col.status === 'pass' ? 'bg-green-500/20 text-green-400' :
-                                                col.status === 'warning' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                    'bg-red-500/20 text-red-400'
+                                            col.status === 'warning' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                'bg-red-500/20 text-red-400'
                                             }`}>{col.status}</span>
                                     </td>
                                 </tr>
@@ -588,8 +588,8 @@ function MLReadinessTab({ mlReadiness }) {
                         </div>
                     </div>
                     <div className={`px-6 py-3 rounded-xl ${mlReadiness.status === 'ready' ? 'bg-green-500/20 text-green-400' :
-                            mlReadiness.status === 'needs_improvement' ? 'bg-yellow-500/20 text-yellow-400' :
-                                'bg-red-500/20 text-red-400'
+                        mlReadiness.status === 'needs_improvement' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-red-500/20 text-red-400'
                         }`}>
                         <div className="text-3xl font-bold">{mlReadiness.score}%</div>
                         <div className="text-sm capitalize">{mlReadiness.status?.replace('_', ' ')}</div>
@@ -610,8 +610,8 @@ function MLReadinessTab({ mlReadiness }) {
                                 <div className="flex items-center justify-between mb-3">
                                     <span className="text-white font-medium">{cls.column}</span>
                                     <span className={`px-2 py-1 rounded text-xs ${cls.status === 'balanced' ? 'bg-green-500/20 text-green-400' :
-                                            cls.status === 'imbalanced' ? 'bg-yellow-500/20 text-yellow-400' :
-                                                'bg-red-500/20 text-red-400'
+                                        cls.status === 'imbalanced' ? 'bg-yellow-500/20 text-yellow-400' :
+                                            'bg-red-500/20 text-red-400'
                                         }`}>{cls.status}</span>
                                 </div>
                                 <div className="grid grid-cols-4 gap-4 text-sm">

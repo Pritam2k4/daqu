@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { supabase } from './supabase'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -7,6 +8,17 @@ const apiClient = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+})
+
+// Add auth token to requests
+apiClient.interceptors.request.use(async (config) => {
+    if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.access_token) {
+            config.headers.Authorization = `Bearer ${session.access_token}`
+        }
+    }
+    return config
 })
 
 // API Methods
@@ -149,6 +161,20 @@ export const api = {
 
     getAssistantStatus: async () => {
         const response = await apiClient.get('/api/v1/assistant/status')
+        return response.data
+    },
+
+    // ====================
+    // USER DATA (from Supabase)
+    // ====================
+
+    getUserStats: async () => {
+        const response = await apiClient.get('/api/v1/user/stats')
+        return response.data
+    },
+
+    getUserDataSources: async () => {
+        const response = await apiClient.get('/api/v1/user/data-sources')
         return response.data
     },
 }

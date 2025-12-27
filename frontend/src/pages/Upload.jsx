@@ -83,7 +83,7 @@ export default function Upload() {
 
                 {/* File Upload Area */}
                 <div
-                    className={`card border-2 border-dashed ${dragActive ? 'border-primary-600 bg-primary-600/5' : 'border-zinc-700'} hover:border-primary-600 transition-all duration-300 cursor-pointer mb-8`}
+                    className={`card border-2 border-dashed ${dragActive ? 'border-primary-500 bg-primary-500/5' : 'border-zinc-700'} hover:border-primary-500 transition-all duration-300 cursor-pointer mb-8`}
                     onDragEnter={handleDrag}
                     onDragLeave={handleDrag}
                     onDragOver={handleDrag}
@@ -91,7 +91,7 @@ export default function Upload() {
                     onClick={() => document.getElementById('file-input').click()}
                 >
                     <div className="text-center py-12">
-                        <div className={`w-16 h-16 rounded-full bg-primary-600/10 flex items-center justify-center mx-auto mb-4 ${uploading ? 'animate-pulse' : ''}`}>
+                        <div className={`w-16 h-16 rounded-full bg-primary-500/10 flex items-center justify-center mx-auto mb-4 ${uploading ? 'animate-pulse' : ''}`}>
                             <UploadIcon className="w-8 h-8 text-primary-500" />
                         </div>
                         <h3 className="text-xl font-semibold text-white mb-2">
@@ -125,10 +125,10 @@ export default function Upload() {
                 <button
                     onClick={handleDatabaseConnect}
                     disabled={uploading}
-                    className="w-full card hover:border-primary-600 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full card hover:border-primary-500 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     <div className="flex items-center space-x-4">
-                        <div className={`w-14 h-14 rounded-full bg-primary-600/10 flex items-center justify-center ${uploading ? 'animate-pulse' : ''}`}>
+                        <div className={`w-14 h-14 rounded-full bg-primary-500/10 flex items-center justify-center ${uploading ? 'animate-pulse' : ''}`}>
                             <Database className="w-7 h-7 text-primary-500" />
                         </div>
                         <div className="text-left">
