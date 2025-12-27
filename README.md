@@ -1,244 +1,178 @@
-# DataReady AI
+# DAQU - Know Your Data
 
-AI-powered data preparation platform that transforms messy, unstructured data into clean, AI-training-ready datasets.
+> AI-Powered Data Quality Platform for ML-Ready Datasets
 
-## Project Structure
+![DAQU](frontend/public/daqu-logo.png)
 
-```
-dataready-ai/
-├── frontend/          # React + Vite
-├── backend/           # FastAPI
-├── README.md          # This file
-└── SUPABASE_SETUP.md  # Database setup guide
-```
+---
 
-## Quick Start
+## 🎯 What is DAQU?
 
-### 1. Backend (FastAPI)
+DAQU is an enterprise-grade data quality analysis platform that helps you:
+- **Analyze** data quality using DAMA & ISO 25024 standards
+- **Fix** issues with AI-powered suggestions and one-click fixes
+- **Train** ML models with 15+ algorithms
+- **Chat** with an AI assistant about your data
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+- Supabase account (free)
+- Groq API key (free, optional)
+
+### 1. Clone & Setup Backend
 
 ```bash
 cd backend
+python -m venv venv
+.\venv\Scripts\activate  # Windows
+pip install -r requirements.txt
+```
 
-# Activate virtual environment
-.\venv\Scripts\activate
+Create `backend/.env`:
+```env
+SUPABASE_URL=your_supabase_url
+SUPABASE_KEY=your_supabase_anon_key
+GROQ_API_KEY=your_groq_api_key
+```
 
-# Run server
+Run backend:
+```bash
 uvicorn app.main:app --reload --port 8000
 ```
 
-**Backend will run on:** `http://localhost:8000`  
-**API Docs:** `http://localhost:8000/docs`
-
-### 2. Frontend (React + Vite)
+### 2. Setup Frontend
 
 ```bash
 cd frontend
-
-# Install dependencies (first time only)
 npm install
+```
 
-# Run dev server
+Create `frontend/.env`:
+```env
+VITE_API_URL=http://localhost:8000
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Run frontend:
+```bash
 npm run dev
 ```
 
-**Frontend will run on:** `http://localhost:5173`
+### 3. Open the App
+Go to **http://localhost:5173**
 
 ---
 
-## Features Implemented
+## 📁 Project Structure
 
-### ✅ Frontend
-- Dark theme with purple accents
-- Minimal, modern UI
-- File upload with drag-and-drop
-- Database connection interface
-- Real-time API integration
-- Loading states and error handling
-- Global AI Assistant (accessible from any page)
-- ML Model Training Dashboard
-- Data Quality Report Viewer
+```
+daqu/
+├── backend/                 # FastAPI Python Backend
+│   ├── app/
+│   │   ├── api/v1/         # API endpoints
+│   │   ├── services/       # Business logic
+│   │   └── main.py         # App entry
+│   └── requirements.txt
+│
+├── frontend/               # React + Vite Frontend
+│   ├── src/
+│   │   ├── components/     # UI components
+│   │   ├── pages/          # Page components
+│   │   ├── services/       # API & Supabase
+│   │   └── context/        # React context
+│   └── package.json
+│
+└── README.md
+```
 
-### ✅ Backend - Core Features
+---
 
-#### 1. File Upload & Analysis
-- Upload CSV, Excel, JSON files
-- Automatic data type detection
-- Comprehensive data profiling
-- Quality score calculation (DAMA framework)
+## ✨ Features
 
-#### 2. Database Connectivity
-- **PostgreSQL** - Full support with table listing, schema analysis
-- **MySQL** - Full support for connections and queries
-- **MongoDB** - NoSQL document database support
-- **SQLite** - Embedded file-based database support
-- Test connections, list tables, analyze table data
+### Data Quality Analysis
+- **6 Quality Dimensions**: Completeness, Uniqueness, Validity, Consistency, Accuracy, Timeliness
+- **ML Readiness Score**: Class balance, correlation, target leakage detection
+- **50+ Quality Metrics** based on industry standards
 
-#### 3. Data Quality Analysis
-- Industry-standard metrics (DAMA, ISO 25024)
-- Completeness, uniqueness, consistency, validity scores
-- Missing data detection and patterns
-- Duplicate detection
-- Data type validation
-- Outlier identification
+### AI-Powered Fixes
+- Automatic issue detection
+- Smart fix recommendations with code snippets
+- One-click apply (coming soon)
 
-#### 4. ML Model Training
-- **Classification Models:** XGBoost, LightGBM, CatBoost, Random Forest, Gradient Boosting, Logistic Regression, SVM, KNN
-- **Regression Models:** XGBoost, LightGBM, CatBoost, Random Forest, Gradient Boosting, Linear Regression, SVR, KNN
-- Train single model or compare multiple
-- Performance metrics (accuracy, F1, ROC-AUC, RMSE, R²)
+### Model Studio
+- Train 15+ ML models
+- Auto hyperparameter tuning
 - Feature importance visualization
-- Training result storage
+- Cross-validation scoring
 
-#### 5. AI-Powered Features
-- Model recommendations based on data characteristics
-- LLM-powered suggestions (Groq/OpenAI)
-- Natural language Q&A about data and models
-- AI fix suggestions for data quality issues
-
-#### 6. Global AI Assistant
-- Accessible from any page via `/api/v1/assistant/message`
-- Platform-aware context (knows about uploads, quality reports, training history)
-- Conversational interface with memory
-- Integrated with Groq/OpenAI for intelligent responses
-
-#### 7. Export & Processing
-- Export quality reports (JSON format)
-- Apply data transformations
-- Processing history tracking
+### AI Assistant
+- Natural language queries about your data
+- Powered by Groq (Llama 3.3 70B)
 
 ---
 
-## API Endpoints
+## 🔧 Tech Stack
 
-### Root Endpoints
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Root endpoint - API info |
-| GET | `/health` | Health check |
-
-### Upload Endpoints (`/api/v1/upload`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/file` | Upload CSV, Excel, or JSON file |
-| POST | `/database` | Database connection endpoint |
-
-### Quality Endpoints (`/api/v1/quality`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/analyze/{source_id}` | Analyze data quality |
-| GET | `/report/{source_id}` | Get quality report |
-| GET | `/templates` | Get ML dataset templates |
-| GET | `/demo` | Get demo quality report |
-
-### Processing Endpoints (`/api/v1/processing`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/apply-fixes` | Apply approved data fixes |
-| GET | `/history/{source_id}` | Get processing history |
-| GET | `/suggestions/{source_id}` | Get AI fix suggestions |
-| GET | `/export/{source_id}` | Export quality report |
-
-### Database Endpoints (`/api/v1/database`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/test` | Test database connection |
-| POST | `/list-tables` | List all tables in database |
-| POST | `/analyze-table` | Analyze specific table |
-| POST | `/table-schema` | Get table schema info |
-| GET | `/supported-types` | Get supported database types |
-
-### ML Models Endpoints (`/api/v1/models`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/supported` | Get list of supported ML models |
-| POST | `/recommend` | Get AI model recommendations |
-| POST | `/chat` | Chat about models with LLM |
-| POST | `/train` | Train a specific model |
-| POST | `/compare` | Train and compare multiple models |
-| GET | `/results/{training_id}` | Get training results |
-| GET | `/charts/{training_id}/{chart_type}` | Get training visualization chart |
-| GET | `/demo-analysis` | Get demo model analysis |
-
-### AI Assistant Endpoints (`/api/v1/assistant`)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/message` | Send message to AI assistant |
-| GET | `/status` | Get assistant status |
-| GET | `/context` | Get current platform context |
-| DELETE | `/history/{conversation_id}` | Clear conversation history |
+| Layer | Technology |
+|-------|------------|
+| Frontend | React, Vite, Tailwind CSS |
+| Backend | FastAPI, Python 3.11 |
+| Database | Supabase (PostgreSQL) |
+| Auth | Supabase Auth (Google OAuth) |
+| AI | Groq API (Llama 3.3) |
+| ML | scikit-learn, pandas, numpy |
 
 ---
 
-## Tech Stack
+## 🔐 Environment Variables
 
-**Frontend:**
-- React 18
-- Vite 6
-- Tailwind CSS
-- Axios
-- React Router
+### Backend (`backend/.env`)
+| Variable | Description |
+|----------|-------------|
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_KEY` | Supabase anon/public key |
+| `GROQ_API_KEY` | Groq API key (optional) |
 
-**Backend:**
-- Python 3.10
-- FastAPI
-- Uvicorn
-- Pandas / NumPy
-- Scikit-learn / XGBoost / LightGBM / CatBoost
-- Supabase
-- Groq / OpenAI (for LLM features)
+### Frontend (`frontend/.env`)
+| Variable | Description |
+|----------|-------------|
+| `VITE_API_URL` | Backend URL (http://localhost:8000) |
+| `VITE_SUPABASE_URL` | Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anon/public key |
 
 ---
 
-## Environment Variables
+## 📝 API Endpoints
 
-Create `.env` files in both directories:
-
-**Frontend `.env`:**
-```
-VITE_API_URL=http://localhost:8000
-```
-
-**Backend `.env`:**
-```
-SUPABASE_URL=your_url
-SUPABASE_KEY=your_key
-GROQ_API_KEY=your_key
-OPENAI_API_KEY=your_key
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/v1/upload/file` | Upload CSV/Excel file |
+| GET | `/api/v1/quality/report/{id}` | Get quality report |
+| GET | `/api/v1/quality/demo` | Load demo data |
+| POST | `/api/v1/models/train` | Train ML model |
+| GET | `/api/v1/models/supported` | List available models |
+| POST | `/api/v1/assistant/chat` | Chat with AI |
 
 ---
 
-## Services Architecture
+## 🎨 Design
 
-```
-backend/app/services/
-├── ai_suggestions.py       # AI-powered fix suggestions
-├── data_analyzer.py        # Enterprise-grade data analysis
-├── data_export.py          # Export functionality
-├── db_connector.py         # Multi-database connector
-├── llm_chat.py             # LLM chat service (Groq/OpenAI)
-├── ml_templates.py         # ML dataset templates
-├── model_recommender.py    # AI model recommendations
-├── model_trainer.py        # ML model training
-├── platform_context.py     # Global platform context
-├── supabase_service.py     # Supabase integration
-└── visualization_generator.py  # Chart generation
-```
+- **Theme**: Dark mode with gold/amber accents
+- **Font**: Space Grotesk + Orbitron (cyberpunk hero)
+- **Style**: 2025 trends - glassmorphism, scroll animations, micro-interactions
 
 ---
 
-## Testing the Integration
+## 📄 License
 
-1. Open `http://localhost:5173` in your browser
-2. Click "Upload File" button to test file upload
-3. Click "Connect Database" to test database connection
-4. Use the AI Assistant chat to ask questions
-5. Navigate to Model Training to train ML models
-6. View API logs in the backend terminal
-7. Access Swagger docs at `http://localhost:8000/docs`
+MIT License - feel free to use and modify!
 
 ---
 
-## License
-
-MIT
+**Built with ❤️ by Pritam**
